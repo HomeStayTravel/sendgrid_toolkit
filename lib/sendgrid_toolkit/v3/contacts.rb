@@ -31,6 +31,12 @@ module SendgridToolkit
         fail ContactsError.new(response['errors']) if response.is_a?(Hash) && response.key?('errors')
         response
       end
+
+      def search(params)
+        response = api_get("recipients/search", params)
+        fail ContactsError.new(response['errors']) if response.is_a?(Hash) && response.key?('errors')
+        response
+      end
     end
   end
 end
