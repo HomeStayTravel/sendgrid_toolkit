@@ -17,49 +17,8 @@ Gem::Specification.new do |s|
     "LICENSE.txt",
     "README.md"
   ]
-  s.files = [
-    ".rvmrc",
-    ".travis.yml",
-    "Gemfile",
-    "Gemfile.lock",
-    "LICENSE.txt",
-    "README.md",
-    "Rakefile",
-    "VERSION",
-    "lib/sendgrid_toolkit.rb",
-    "lib/sendgrid_toolkit/abstract_sendgrid_client.rb",
-    "lib/sendgrid_toolkit/blocks.rb",
-    "lib/sendgrid_toolkit/bounces.rb",
-    "lib/sendgrid_toolkit/common.rb",
-    "lib/sendgrid_toolkit/invalid_emails.rb",
-    "lib/sendgrid_toolkit/mail.rb",
-    "lib/sendgrid_toolkit/newsletter/list_emails.rb",
-    "lib/sendgrid_toolkit/newsletter/lists.rb",
-    "lib/sendgrid_toolkit/newsletter/newsletter_sendgrid_client.rb",
-    "lib/sendgrid_toolkit/sendgrid_error.rb",
-    "lib/sendgrid_toolkit/spam_reports.rb",
-    "lib/sendgrid_toolkit/statistics.rb",
-    "lib/sendgrid_toolkit/unsubscribes.rb",
-    'lib/sendgrid_toolkit/v3/groups.rb',
-    'lib/sendgrid_toolkit/v3/unsubscribes.rb',
-    'lib/sendgrid_toolkit/v3/abstract_sendgrid_client.rb',
-    "sendgrid_toolkit.gemspec",
-    "spec/helper.rb",
-    "spec/lib/sendgrid_toolkit/abstract_sendgrid_client_spec.rb",
-    "spec/lib/sendgrid_toolkit/blocks_spec.rb",
-    "spec/lib/sendgrid_toolkit/bounces_spec.rb",
-    "spec/lib/sendgrid_toolkit/common_spec.rb",
-    "spec/lib/sendgrid_toolkit/invalid_emails_spec.rb",
-    "spec/lib/sendgrid_toolkit/mail_spec.rb",
-    "spec/lib/sendgrid_toolkit/newsletter/newsletter_sendgrid_client_spec.rb",
-    "spec/lib/sendgrid_toolkit/spam_reports_spec.rb",
-    "spec/lib/sendgrid_toolkit/statistics_spec.rb",
-    "spec/lib/sendgrid_toolkit/unsubscribes_spec.rb",
-    "spec/lib/sendgrid_toolkit_spec.rb",
-    "spec/webconnect/sendgrid_toolkit_spec.rb",
-    'spec/lib/sendgrid_toolkit/v3/abstract_sendgrid_client_spec.rb',
-    'spec/lib/sendgrid_toolkit/v3/unsubscribes_spec.rb'
-  ]
+  s.files = `git ls-files`.split($/)
+
   s.homepage = "http://github.com/freerobby/sendgrid_toolkit"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
