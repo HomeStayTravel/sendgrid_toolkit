@@ -15,21 +15,28 @@ module SendgridToolkit
       protected
 
       def api_post(action_name, options = {})
-        response = HTTParty.post("#{BASE_URI}/#{action_name}",
+        response = HTTParty.post("#{self.class::BASE_URI}/#{action_name}",
+                                 body: options.to_json, format: :json,
+                                 headers: { 'Authorization' => "Basic #{credentials}" })
+        check_response(response)
+      end
+
+      def api_patch(action_name, options = {})
+        response = HTTParty.patch("#{self.class::BASE_URI}/#{action_name}",
                                  body: options.to_json, format: :json,
                                  headers: { 'Authorization' => "Basic #{credentials}" })
         check_response(response)
       end
 
       def api_get(action_name, options = {})
-        response = HTTParty.get("#{BASE_URI}/#{action_name}",
+        response = HTTParty.get("#{self.class::BASE_URI}/#{action_name}",
                                 query: options, format: :json, headers: { 'Authorization' => "Basic #{credentials}" })
         check_response(response)
       end
 
       def api_delete(action_name, options = {})
-        response = HTTParty.delete("#{BASE_URI}/#{action_name}",
-                                   body: options, format: :json,
+        response = HTTParty.delete("#{self.class::BASE_URI}/#{action_name}",
+                                   body: options.to_json, format: :json,
                                    headers: { 'Authorization' => "Basic #{credentials}" })
         check_response(response)
       end
