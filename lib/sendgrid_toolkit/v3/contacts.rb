@@ -19,7 +19,7 @@ module SendgridToolkit
           recipient_id = nil
         end
         action_name = 'recipients' + (recipient_id ? "/#{recipient_id}" : '')
-        response = api_get("action_name", options)
+        response = api_get(action_name, options)
         fail ContactsError.new(response['errors']) if response.is_a?(Hash) && response.key?('errors')
         response
       end
