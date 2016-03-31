@@ -38,7 +38,11 @@ module SendgridToolkit
 
       def check_response(response)
         if response.code > 401
-          fail(SendgridToolkit::SendgridServerError, "The SendGrid server returned an error. #{response.inspect}")
+          if response.code == 429
+            fail SendgridToolkit::RateLimitError.new(response.headers['X-RateLimit-Limit'].to_i, response.headers['X-RateLimit-Reset'].to_i)
+          else
+            fail(SendgridToolkit::SendgridServerError, "The SendGrid server returned an error. #{response.inspect}")
+          end
         elsif error?(response) && response['error'].respond_to?(:has_key?) &&
               response['error'].key?('code') &&
               response['error']['code'].to_i == 401

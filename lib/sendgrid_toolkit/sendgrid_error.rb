@@ -10,4 +10,17 @@ module SendgridToolkit
   class APIError < StandardError; end
   class GroupsError < StandardError; end
   class NoGroupIdSpecified < StandardError; end
+
+  class RateLimitError < StandardError
+
+    attr_reader :limit
+    attr_reader :reset
+
+    def initialize(limit, reset)
+      @limit = limit
+      @reset = reset
+    end
+
+  end
+
 end

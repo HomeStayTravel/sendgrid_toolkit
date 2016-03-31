@@ -9,27 +9,49 @@ describe SendgridToolkit::V3::AbstractSendgridClient do
   end
 
   describe '#api_post' do
+
     it "throws error when authentication fails" do
-      FakeWeb.register_uri(:post, %r|https://#{REGEX_ESCAPED_BASE_URI_V3}/profile\.get\.json\?|, :body => '{"error":{"code":401,"message":"Permission denied, wrong credentials"}}')
-      @obj = SendgridToolkit::AbstractSendgridClient.new("fakeuser", "fakepass")
+      FakeWeb.register_uri(:post, %r|https://fakeuser:fakepass@#{REGEX_ESCAPED_BASE_URI_V3}/profile/get|, :body => '{"error":{"code":401,"message":"Permission denied, wrong credentials"}}')
+      @obj = SendgridToolkit::V3::AbstractSendgridClient.new("fakeuser", "fakepass")
       lambda {
-        @obj.send(:api_post, "profile", "get", {})
+        @obj.send(:api_post, "profile/get", {})
       }.should raise_error SendgridToolkit::AuthenticationFailed
     end
-    it "thows error when sendgrid response is a server error" do
-      FakeWeb.register_uri(:post, %r|https://#{REGEX_ESCAPED_BASE_URI_V3}/profile\.get\.json\?|, :body => '{}', :status => ['500', 'Internal Server Error'])
-      @obj = SendgridToolkit::AbstractSendgridClient.new("someuser", "somepass")
+
+    it "throws error when sendgrid response is a server error" do
+      FakeWeb.register_uri(:post, %r|https://fakeuser:fakepass@#{REGEX_ESCAPED_BASE_URI_V3}/profile/get|, :body => '{}', :status => ['500', 'Internal Server Error'])
+      @obj = SendgridToolkit::V3::AbstractSendgridClient.new("fakeuser", "fakepass")
       lambda {
-        @obj.send(:api_post, "profile", "get", {})
-      }.should raise_error SendgridToolkit::AuthenticationFailed
-    end
-    it "thows error when sendgrid response is an API error" do
-      FakeWeb.register_uri(:post, %r|https://#{REGEX_ESCAPED_BASE_URI_V3}/stats\.get\.json\?|, :body => '{"error": "error in end_date: end date is in the future"}', :status => ['400', 'Bad Request'])
-      @obj = SendgridToolkit::AbstractSendgridClient.new("someuser", "somepass")
-      lambda {
-        @obj.send(:api_post, "stats", "get", {})
+        @obj.send(:api_post, "profile/get", {})
       }.should raise_error SendgridToolkit::SendgridServerError
     end
+
+    it "throws error when sendgrid response is an API error" do
+      FakeWeb.register_uri(:post, %r|https://fakeuser:fakepass@#{REGEX_ESCAPED_BASE_URI_V3}/stats/get|, :body => '{"error": "error in end_date: end date is in the future"}', :status => ['400', 'Bad Request'])
+      @obj = SendgridToolkit::V3::AbstractSendgridClient.new("fakeuser", "fakepass")
+      lambda {
+        @obj.send(:api_post, "stats/get", {})
+      }.should raise_error SendgridToolkit::APIError, 'error in end_date: end date is in the future'
+    end
+
+    it "throws error when sendgrid response is a rate limit error" do
+      FakeWeb.register_uri(:post, %r|https://fakeuser:fakepass@#{REGEX_ESCAPED_BASE_URI_V3}/stats/get|,
+        'X-RateLimit-Limit' => 500,
+        'X-RateLimit-Remaining' => 0,
+        'X-RateLimit-Reset' => 1392815263,
+        :body => '{"errors": [{"field": null, "message": "too many requests"}]}',
+        :status => ['429', 'Too many requests']
+      )
+      @obj = SendgridToolkit::V3::AbstractSendgridClient.new("fakeuser", "fakepass")
+      lambda {
+        @obj.send(:api_post, "stats/get", {})
+      }.should raise_error { |error|
+        error.class.should eq(SendgridToolkit::RateLimitError)
+        error.limit.should eq(500)
+        error.reset.should eq(1392815263)
+      }
+    end
+
   end
 
   describe "#initialize" do
